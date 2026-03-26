@@ -1,73 +1,57 @@
 # TradeX
 
-A full-stack stock trading simulation platform where users can browse market data, place buy/sell orders, manage portfolios, and track watchlists — all with real-time-style market information.
+A paper trading platform with real-time market data. Practice investing with live stock quotes — no real money involved.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | Vue 3, Vite, Tailwind CSS, DaisyUI, Pinia, amCharts 5 |
-| Backend | Java 21 Servlets (WAR), JWT authentication, Google Gmail API |
-| Database | MySQL 8 |
-| Server | Apache Tomcat |
+| Frontend | Vue 3, Vite, TailwindCSS, Pinia, amCharts 5 |
+| Backend | Spring Boot 3 (Java 21), MySQL 8, Kafka |
+| Market Data | Node.js + yahoo-finance2 |
+| Live Prices | Node.js WebSocket + Redis pub/sub |
+| Auth | JWT, BCrypt, email verification (Gmail SMTP) |
 
 ## Project Structure
 
 ```
 TradeX/
-├── frontend/          # Vue 3 SPA
-│   ├── src/
-│   │   ├── components/    # Vue components (30+)
-│   │   ├── stores/        # Pinia stores (auth, account, admin, symbolQuote)
-│   │   ├── status/        # Page-level views (Login, SignUp, Admin, AccountManagement)
-│   │   ├── library/       # Axios config, constants, utilities
-│   │   └── styles/        # Global styles
-│   └── vite.config.js
-│
-├── backend/           # Java Servlet API
-│   ├── src/main/java/
-│   │   ├── controller/    # Servlet endpoints
-│   │   └── domain/        # Domain models, DAOs, services
-│   └── pom.xml
-│
-└── database/          # SQL scripts
-    ├── schema.sql         # Table definitions
-    └── data.sql           # Sample seed data
+├── frontend/              # Vue 3 SPA
+├── backend-springboot/    # Spring Boot REST API
+├── backend-node/          # Node.js market data + WebSocket
+├── database/
+│   ├── schema.sql         # Table definitions
+│   └── data.sql           # Seed data (includes admin account)
+├── docker-compose.yml
+└── .env.example
 ```
 
 ## Features
 
-### User Features
-- **Authentication** — Sign up, login, JWT-based sessions, password reset via email verification
-- **Market Data** — Browse instruments with real-time prices, historical charts, fundamentals
-- **Trading** — Place buy/sell orders with portfolio balance tracking
-- **Portfolio** — View holdings with unit price and quantity, track profit/loss
-- **Watchlist** — Add/remove symbols to a personal watchlist
-- **Account Management** — Add funds, view order history, update phone number, change password
+- **Authentication** — Signup with email verification, login, password reset
+- **Market Data** — Live quotes, historical charts, fundamentals, screeners
+- **Trading** — Buy/sell orders with real-time portfolio tracking
+- **Watchlist** — Track symbols with live price updates
+- **Portfolio** — Holdings with P&L tracking
+- **Admin Panel** — User management, order history, market stats
 
-### Admin Features
-- **User Management** — View all users/accounts, export to CSV
-- **Order Management** — View all orders across accounts, export to CSV
-- **Market Stats** — Most traded, most held, most watched symbols
-- **Instrument Management** — Browse/search instruments, view sector/industry hierarchy
+## Default Admin Account
 
-### Visualizations
-- Market treemap by sector (amCharts 5)
-- Winners/losers bar charts
-- Index cards with moving ticker
-- Historical candlestick/line charts
-- Sector & industry tree view
-- Ranking charts for most active, most held, most watched
+| Email | Password |
+|---|---|
+| admin@tradex.com | admin123 |
 
-## Prerequisites
+---
 
-- **Java** 21+
-- **Apache Tomcat** 9 or 10
-- **MySQL** 8.0+
-- **Node.js** 20.19+ or 22.12+
-- **Maven** 3.8+
+## Running Locally
 
-## Setup
+### Prerequisites
+
+- Java 21
+- Maven
+- Node.js 20+
+- MySQL 8
+- Redis
 
 ### 1. Database
 
@@ -76,33 +60,35 @@ mysql -u root -p < database/schema.sql
 mysql -u root -p < database/data.sql
 ```
 
-Configure a JNDI DataSource named `jdbc/TradeX` in your Tomcat server. Add to your Tomcat `context.xml`:
+### 2. Spring Boot Backend
 
-```xml
-<Resource name="jdbc/TradeX"
-          auth="Container"
-          type="javax.sql.DataSource"
-          driverClassName="com.mysql.cj.jdbc.Driver"
-          url="jdbc:mysql://localhost:3306/TradeX"
-          username="your_username"
-          password="your_password"
-          maxTotal="20"
-          maxIdle="10"
-          maxWaitMillis="10000" />
-```
-
-### 2. Backend
+Edit `backend-springboot/src/main/resources/application.properties` with your database and mail credentials, then:
 
 ```bash
-cd backend
-mvn clean package
+cd backend-springboot
+./mvnw spring-boot:run
 ```
 
-Deploy the generated `target/TradeX-0.0.1-SNAPSHOT.war` to Tomcat's `webapps/` directory (rename to `TradeX.war` for cleaner URLs).
+Runs on `http://localhost:8080`.
 
-The API will be available at `http://localhost:8080/TradeX`.
+### 3. Node.js Services
 
-### 3. Frontend
+```bash
+cd backend-node
+npm install
+```
+
+Start each in a separate terminal:
+
+```bash
+node src/yahoo.js      # Market data API — http://localhost:5002
+node src/websocket.js  # Live price WebSocket — ws://localhost:5003
+node src/poller.js     # Polls Yahoo Finance and pushes to Redis
+```
+
+> Redis must be running locally: `redis-server`
+
+### 4. Frontend
 
 ```bash
 cd frontend
@@ -110,45 +96,40 @@ npm install
 npm run dev
 ```
 
-The frontend dev server runs at `http://localhost:5173` and expects the backend at `http://localhost:8080/TradeX`.
+Open `http://localhost:5173/TradeX`.
 
-To build for production:
+---
+
+## Docker Deployment
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### 1. Configure environment
 
 ```bash
-npm run build
+cp .env.example .env
+# Fill in your secrets in .env
 ```
 
-The output will be in `frontend/dist/`.
+### 2. Start everything
 
-## Database Schema
+```bash
+docker-compose up -d
+```
 
-9 tables across 3 domains:
+App will be available on port `80`.
 
-**User & Account**
-- `ACCOUNTS` — Login credentials, balances, role (Regular/Admin), status (Active/Limited/Frozen/Closed)
-- `USERS` — Personal info linked to an account
+### Updating after code changes
 
-**Market & Instruments**
-- `instruments` — Stock/index metadata with sector, industry, exchange info
-- `market_data` — Real-time price data (price, volume, moving averages)
-- `fundamental_metrics` — PE ratios, EPS, dividends, market cap
-- `historical_quotes` — Daily OHLCV candle data
+```bash
+# Rebuild and push the changed image(s)
+docker build --platform linux/amd64 -t haoenc/tradex-frontend:latest ./frontend
+docker push haoenc/tradex-frontend:latest
 
-**Trading & Portfolio**
-- `orders` — Buy/Sell orders with status tracking (Open/Filled/Cancelled)
-- `ACCOUNT_HOLDS_SYMBOLS` — Current portfolio holdings
-- `ACCOUNT_WATCHES_SYMBOLS` — Watchlist entries
-
-## API Endpoints
-
-Key servlet endpoints (all under `/TradeX`):
-
-| Category | Endpoints |
-|---|---|
-| Auth | Login, SignUp, RequestPasswordReset, ResetPassword, SendSignupVerificationCode |
-| Account | GetAccountInfo, AddFund, UpdatePassword, UpdateMobileNumber, DeleteAccount |
-| Trading | CreateOrder, GetOrders, GetHoldings, UpdateHolding |
-| Watchlist | AddWatching, RemoveWatching, GetWatchings |
-| Market Data | SearchSymbol, GetRandomSymbolQuotes, GetTopWinners, GetTopLosers, GetMostActive |
-| Admin | GetUsers, GetAllOrders, GetAllInstruments, SearchInstruments, ExportUsersCSV, ExportOrdersCSV, ExportInstrumentsCSV |
-| Analytics | GetMostTraded, GetMostHeld, GetMostWatched, GetTotalProfitLoss, GetMarketTreemapData, GetSectorIndustryTree |
+# On the server
+docker-compose pull
+docker-compose up -d
+```

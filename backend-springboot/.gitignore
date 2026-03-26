@@ -1,0 +1,22 @@
+# Build artifacts
+target/
+bin/
+build/
+
+# IDE settings
+.settings/
+.classpath
+.project
+.metadata/
+.metadata 2/
+src 2/
+*.class
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Sensitive config
+src/main/resources/email.properties

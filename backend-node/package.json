@@ -1,0 +1,22 @@
+{
+  "name": "yahoofinance",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "sh start.sh",
+    "start:yahoo": "node src/yahoo.js",
+    "start:poller": "node src/poller.js",
+    "start:websocket": "node src/websocket.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "express": "^5.2.1",
+    "redis": "^5.11.0",
+    "ws": "^8.20.0",
+    "yahoo-finance2": "^3.13.2"
+  }
+}
