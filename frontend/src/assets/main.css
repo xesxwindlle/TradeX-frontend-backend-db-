@@ -1,0 +1,285 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; list-style: none; }
+button {cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+html, body, #app { height: 100%; }
+
+:root {
+  --color1--: #8b5cf6;
+  --color2--: #09090b;
+  --color3--: #18181b;
+  --hover--:  #27272a;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--color2--);
+  color: #f4f4f5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* ── Header ── */
+.header {
+  background: var(--color2--);
+  border-bottom: 1px solid var(--color3--);
+  padding: 0 24px;
+  height: 57px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 3;
+  position: fixed;
+  width: 100vw;
+}
+
+.header-brand {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--color1--);
+  margin-right: 2rem;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.header-brand #X {
+  color: white;
+  font-size: 28px;
+  font-style: italic;
+  vertical-align: middle;
+}
+
+.icons-set {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  margin: 0 24px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-link:hover { background: var(--color3--); color: #f4f4f5; }
+.nav-link.active { background: rgba(139,92,246,0.12); color: var(--color1--); }
+
+.admin-label {
+  padding: 4px 10px;
+  background: var(--color2--);
+  color: #c7d2fe;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid var(--color1--);
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.signout-btn:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+/* ── Landing / Dashboard container ── */
+.landing-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.welcome-section { margin-bottom: 32px; }
+.welcome-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+.welcome-subtitle { font-size: 16px; color: #9ca3af; }
+
+/* ── Stat cards grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--color3--);
+  border: 1px solid var(--color3--);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+  cursor: default;
+}
+
+.stat-card:hover {
+  border-color: var(--color1--);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-change {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--color1--);
+}
+
+/* ── Main 2-col chart grid ── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--color3--);
+  border: 1px solid var(--color3--);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.3s;
+}
+
+.chart-card:hover { border-color: var(--color1--); }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.card-title { font-size: 18px; font-weight: 700; }
+.card-subtitle { font-size: 13px; color: #9ca3af; margin-top: 4px; }
+
+.card-link {
+  font-size: 12px;
+  color: var(--color1--);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+.card-link:hover { text-decoration: underline; }
+
+/* ── Tables ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  border-bottom: 1px solid var(--color3--);
+}
+
+.data-table td {
+  padding: 12px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(39,39,42,0.6);
+}
+
+.data-table tr:hover td { background: rgba(39,39,42,0.4); }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-positive { background: rgba(34,197,94,0.12); color: #22c55e; }
+.badge-negative { background: rgba(239,68,68,0.12); color: #ef4444; }
+.badge-neutral   { background: rgba(39,39,42,0.5); color: #a1a1aa; }
+
+/* ── Page section wrapper ── */
+.page-section {
+  background: var(--color3--);
+  border: 1px solid var(--color3--);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color3--);
+}
+
+/* ── Animations ── */
+.page-enter { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.tabular { font-variant-numeric: tabular-nums; }
